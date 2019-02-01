@@ -1,0 +1,39 @@
+{
+  "name": "redux-saga-connect",
+  "version": "0.0.1",
+  "description": "redux-saga-connect is a decorator react components to connect the sagas runtime.",
+  "main": "index.js",
+  "types": ".index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "preversion": "npm run build",
+    "release:patch": "npm run preversion && npm version patch && npm publish && git push --follow-tags",
+    "release:minor": "npm run preversion && npm version minor && npm publish && git push --follow-tags",
+    "release:major": "npm run preversion && npm version major && npm publish && git push --follow-tags"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^16.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^16.6.3",
+    "@types/node": "^10.12.21",
+    "eslint": "5.6.0",
+    "eslint-config-airbnb": "17.1.0",
+    "eslint-config-prettier": "3.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-prettier": "3.0.0",
+    "eslint-plugin-react": "^7.6.1",
+    "eslint-plugin-tslint": "^3.1.0",
+    "eslint-plugin-typescript": "^0.14.0",
+    "prettier": "^1.16.1",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.17.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "tslint-react": "^3.6.0",
+    "typescript": "^3.2.2",
+    "typescript-eslint-parser": "^21.0.2"
+  }
+}
