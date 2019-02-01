@@ -36,12 +36,16 @@ In *componentWillUnmount* will cancel running sagas
 // with es6
 import React from 'react';
 import withSaga from 'redux-saga-connect'
+
 // React component
 const Component = () => (<div>Component</div>);
+
 // Saga
 function* mainSaga(){};
+
 // Return enhancered component
 export default withSaga({mainSaga})(Component);
+
 // with recompose
 export default compose(withSaga({mainSaga}))(Component)
 ```
@@ -53,8 +57,10 @@ import withSaga from 'redux-saga-connect'
 // React component
 interface ComponentProps {}
 const Component: React.FC<ComponentProps> = () => <div>Component</div>;
+
 // Saga
 function* mainSaga() {}
+
 // Return enhancered compoenent
 export default withSaga<ComponentProps>({ mainSaga })(Component);
 
@@ -70,12 +76,6 @@ withSaga(objectOfSagas)
  objectOfSagas  {
      [key:string]: Saga or Object
  }
- Object description
-| Name | Type  |Require | Default value  | Descripttion |
-| ------------- |:-------------:| -----:| -----:|-----:|
-| saga   | Function generator | true |  - | Saga functioin
-| force | Boolean  |  false  |  false | If a Saga with this name already exists, the current Saga will get a unique name in will start
-| hold | Boolean      |   false  | false | Saga will not delete in componentWillUnmount
 ### Example parameters
 ```javascript
 import withSaga from 'redux-saga-connect';
