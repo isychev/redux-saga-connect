@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as ReactRedux from "react-redux";
 
 type Saga0 = () => Iterator<any>;
 type Saga1 = (...arg1: any[]) => Iterator<any>;
@@ -66,94 +67,121 @@ export const getNormalizeSaga = (
   };
 };
 
+const reactReduxContextKey = "ReactReduxContext";
+const ReactReduxContext = ReactRedux[reactReduxContextKey];
+
+const DefaultContext: React.FC = (props: any): any => props.children();
+
 const withSaga: withSagaType = (newSagas: SagaInputObj) => <P extends {}>(
   Component: React.ComponentType<P>,
-): React.ComponentType<P> =>
-  class WithAppendSaga extends React.Component<P> {
-    public static contextTypes = {
-      store: () => null,
-    };
+): React.ComponentType<P> => (mainProps: any) => {
+  const RenderWrap = ReactReduxContext
+    ? ReactReduxContext.Consumer
+    : DefaultContext;
+  return (
+    <RenderWrap>
+      {(MainContext: any) => {
+        class WithAppendSaga extends React.Component<any> {
+          public static contextTypes = {
+            store: () => null,
+          };
 
-    public ownSagas: SagaComponent[] = [];
+          public ownSagas: SagaComponent[] = [];
 
-    public store: StoreWithSaga | null;
+          public store: StoreWithSaga | null;
 
-    constructor(props: P, context: Context) {
-      super(props, context);
-      if (context && context.store && context.store.runSaga) {
-        this.store = context.store;
-        this.store.sagas = this.store.sagas || [];
-        const { runSaga, sagas: storeSagas } = this.store;
-        Object.keys(newSagas).forEach((sagaName: string) => {
-          const { saga, force, hold } = getNormalizeSaga(newSagas[sagaName]);
-          const finalSagaName = force
-            ? `${sagaName}_${Math.random() * 10000000}`
-            : sagaName;
+          constructor(props: any, context: Context) {
+            super(props, context && context.store ? context : MainContext);
 
-          this.ownSagas.push({
-            force,
-            hold,
-            name: finalSagaName,
-            saga,
-          });
-
-          const storeSaga = storeSagas.find(
-            (sagaObj: StoreSaga) => sagaObj.name === finalSagaName,
-          );
-
-          if (storeSaga && !force) {
-            storeSaga.count += 1;
-          } else {
-            storeSagas.push({
-              count: 1,
-              force,
-              hold,
-              name: finalSagaName,
-              saga,
-              task: runSaga(saga, props),
-            });
-          }
-        });
-      } else {
-        this.store = null;
-
-        if (process.env.NODE_ENV !== "production") {
-          console.error(
-            "RunSaga function not found. You need to add runSaga to the Store",
-          );
-        }
-      }
-    }
-
-    public componentWillUnmount() {
-      if (this.store && this.store.runSaga) {
-        const { sagas } = this.store;
-        this.ownSagas.forEach((ownSaga: SagaComponent) => {
-          const { name, hold } = ownSaga;
-          const storeSaga = sagas.find((saga: StoreSaga) => saga.name === name);
-          if (storeSaga) {
-            if (storeSaga.count > 1 || hold) {
-              storeSaga.count -= 1;
-            } else if (
-              storeSaga.count === 1 &&
-              storeSaga.task &&
-              storeSaga.task.isRunning()
+            const finalContext: Context =
+              context && context.store ? context : MainContext;
+            if (
+              finalContext &&
+              finalContext.store &&
+              finalContext.store.runSaga
             ) {
-              storeSaga.task.cancel();
-              if (this.store) {
-                this.store.sagas = this.store.sagas.filter(
-                  (saga: StoreSaga) => saga.name !== storeSaga.name,
+              this.store = finalContext.store;
+              this.store.sagas = this.store.sagas || [];
+              const { runSaga, sagas: storeSagas } = this.store;
+              Object.keys(newSagas).forEach((sagaName: string) => {
+                const { saga, force, hold } = getNormalizeSaga(
+                  newSagas[sagaName],
+                );
+                const finalSagaName = force
+                  ? `${sagaName}_${Math.random() * 10000000}`
+                  : sagaName;
+
+                this.ownSagas.push({
+                  force,
+                  hold,
+                  name: finalSagaName,
+                  saga,
+                });
+
+                const storeSaga = storeSagas.find(
+                  (sagaObj: StoreSaga) => sagaObj.name === finalSagaName,
+                );
+
+                if (storeSaga && !force) {
+                  storeSaga.count += 1;
+                } else {
+                  storeSagas.push({
+                    count: 1,
+                    force,
+                    hold,
+                    name: finalSagaName,
+                    saga,
+                    task: runSaga(saga, props),
+                  });
+                }
+              });
+            } else {
+              this.store = null;
+
+              if (process.env.NODE_ENV !== "production") {
+                console.error(
+                  "RunSaga function not found. You need to add runSaga to the Store",
                 );
               }
             }
           }
-        });
-      }
-    }
 
-    public render() {
-      return <Component {...this.props} />;
-    }
-  };
+          public componentWillUnmount() {
+            if (this.store && this.store.runSaga) {
+              const { sagas } = this.store;
+              this.ownSagas.forEach((ownSaga: SagaComponent) => {
+                const { name, hold } = ownSaga;
+                const storeSaga = sagas.find(
+                  (saga: StoreSaga) => saga.name === name,
+                );
+                if (storeSaga) {
+                  if (storeSaga.count > 1 || hold) {
+                    storeSaga.count -= 1;
+                  } else if (
+                    storeSaga.count === 1 &&
+                    storeSaga.task &&
+                    storeSaga.task.isRunning()
+                  ) {
+                    storeSaga.task.cancel();
+                    if (this.store) {
+                      this.store.sagas = this.store.sagas.filter(
+                        (saga: StoreSaga) => saga.name !== storeSaga.name,
+                      );
+                    }
+                  }
+                }
+              });
+            }
+          }
+
+          public render() {
+            return <Component {...this.props as any} />;
+          }
+        }
+        return <WithAppendSaga {...mainProps} />;
+      }}
+    </RenderWrap>
+  );
+};
 
 export default withSaga;

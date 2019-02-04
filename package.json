@@ -7,18 +7,18 @@
   "scripts": {
     "build": "tsc",
     "preversion": "npm run build",
-    "release:patch": "npm run preversion && npm version patch && npm publish && git push --follow-tags",
-    "release:minor": "npm run preversion && npm version minor && npm publish && git push --follow-tags",
-    "release:major": "npm run preversion && npm version major && npm publish && git push --follow-tags"
+    "release:patch": "npm version patch && npm publish && git push --follow-tags",
+    "release:minor": "npm version minor && npm publish && git push --follow-tags",
+    "release:major": "npm version major && npm publish && git push --follow-tags"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "react": "^16.0.0"
   },
   "devDependencies": {
-    "@types/react": "^16.6.3",
     "@types/node": "^10.12.21",
+    "@types/react": "^16.8.1",
+    "@types/react-redux": "^7.0.1",
     "eslint": "5.6.0",
     "eslint-config-airbnb": "17.1.0",
     "eslint-config-prettier": "3.1.0",
@@ -29,6 +29,9 @@
     "eslint-plugin-tslint": "^3.1.0",
     "eslint-plugin-typescript": "^0.14.0",
     "prettier": "^1.16.1",
+    "react": "^16.6.0",
+    "redux": "^4.0.1",
+    "react-redux": "^6.0.0",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.17.0",
     "tslint-eslint-rules": "^5.4.0",
