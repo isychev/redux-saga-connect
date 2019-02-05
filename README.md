@@ -43,7 +43,7 @@ const Component = () => (<div>Component</div>);
 // Saga
 function* mainSaga(){};
 
-// Return enhancered component
+// Return enhanced component
 export default withSaga({mainSaga})(Component);
 
 // with recompose
@@ -61,7 +61,7 @@ const Component: React.FC<ComponentProps> = () => <div>Component</div>;
 // Saga
 function* mainSaga() {}
 
-// Return enhancered compoenent
+// Return enhanced component
 export default withSaga<ComponentProps>({ mainSaga })(Component);
 
 // with recompose
