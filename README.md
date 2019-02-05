@@ -16,7 +16,7 @@ or
 $ yarn add redux-saga-connect
 ```
 
-## Usage Example
+## Configuration
 When you create a redux store function *sagaMiddleware.run* must be saved to the store object named *runSaga*
 ```javascript 
 // create store
