@@ -1,6 +1,6 @@
 {
   "name": "redux-saga-connect",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "redux-saga-connect is a decorator react components to connect the sagas runtime.",
   "main": "index.js",
   "types": ".index.d.ts",
