@@ -151,22 +151,27 @@ const withSaga: withSagaType = (newSagas: SagaInputObj) => <P extends {}>(
               const { sagas } = this.store;
               this.ownSagas.forEach((ownSaga: SagaComponent) => {
                 const { name, hold } = ownSaga;
-                const storeSaga = sagas.find(
+                const sagaToUninstall = sagas.find(
                   (saga: StoreSaga) => saga.name === name,
                 );
-                if (storeSaga) {
-                  if (storeSaga.count > 1 || hold) {
-                    storeSaga.count -= 1;
+                if (sagaToUninstall) {
+                  if (sagaToUninstall.count > 1 || hold) {
+                    sagaToUninstall.count -= 1;
                   } else if (
-                    storeSaga.count === 1 &&
-                    storeSaga.task &&
-                    storeSaga.task.isRunning()
+                    sagaToUninstall.count === 1 &&
+                    sagaToUninstall.task &&
+                    sagaToUninstall.task.isRunning()
                   ) {
-                    storeSaga.task.cancel();
+                    sagaToUninstall.task.cancel();
                     if (this.store) {
-                      this.store.sagas = this.store.sagas.filter(
-                        (saga: StoreSaga) => saga.name !== storeSaga.name,
+                      const removeIndex: number = this.store.sagas.reduce(
+                        (result: number, saga: StoreSaga, index: number) =>
+                          saga.name === sagaToUninstall.name ? index : result,
+                        -1,
                       );
+                      if (removeIndex > -1) {
+                        this.store.sagas.splice(removeIndex, 1);
+                      }
                     }
                   }
                 }

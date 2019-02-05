@@ -21,6 +21,7 @@
     "it": true,
     "expect": true,
     "jest": true,
+    "test": true
   },
   "rules": {
     "no-console": "off",
